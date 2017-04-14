@@ -1,4 +1,7 @@
 // Data goes here.
+
+// I read the section that was supposed to have me copy the initial data from client/app/database.js to here
+
 var initialData = {
   // The "user" collection. Contains all of the users in our Facebook system.
   "users": {
