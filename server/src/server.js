@@ -281,7 +281,7 @@ app.put('/feeditem/:feeditemid/likelist/:userid', function(req, res) {
     }
     // Return a resolved version of the likeCounter
     res.send(feedItem.likeCounter.map((userId) =>
-	                                  readDocument('users', userId)));
+		                                readDocument('users', userId)));
   } else {
     // 401: Unauthorized.
     res.status(401).end();
@@ -323,14 +323,16 @@ app.put('/feeditem/:feeditemid/comment/:commentid/likelist/:userid', function(re
   if (fromUser === userId) {
     var feedItem = readDocument('feedItems', feedItemId);
     var comment = feedItem.comments[commentId];
+
     // Add to likeCounter if not already present.
     if (comment.likeCounter.indexOf(userId) === -1) {
       comment.likeCounter.push(userId);
       writeDocument('feedItems', feedItem);
     }
     // Return a resolved version of the likeCounter
-    res.send(comment.likeCounter.map((userId) =>
-	                                  readDocument('users', userId)));
+    // Resolve comment author.
+    comment.author = readDocument('users', comment.author);
+    res.send(comment);
   } else {
     // 401: Unauthorized.
     res.status(401).end();
@@ -356,8 +358,8 @@ app.delete('/feeditem/:feeditemid/comment/:commentid/likelist/:userid', function
     // Return a resolved version of the likeCounter
     // Note that this request succeeds even if the
 	// user already unliked the request!
-    res.send(comment.likeCounter.map((userId) =>
-		                                readDocument('users', userId)));
+    comment.author = readDocument('users', comment.author);
+    res.send(comment);
   } else {
     // 401: Unauthorized.
     res.status(401).end();
